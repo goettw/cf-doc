@@ -1,5 +1,10 @@
-
 # Deploy Microbosh
+
+##Prepare VSPHERE
+* Turn on DRS on the cluster, add resource-pool
+
+## On client (in my case ubuntu)
+
 ```
 $ rvm use ruby-2.0
 $ sudo apt-get install libxslt-dev libxml2-dev
