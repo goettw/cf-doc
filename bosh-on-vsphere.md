@@ -7,43 +7,28 @@
 
 ```
 $ bosh download public stemcell bosh-stemcell-1868-vsphere-esxi-ubuntu.tgz
-sudo apt-get -y install libsqlite3-dev genisoimage
-sudo apt-get update
-sudo apt-get install curl
-\curl -L https://get.rvm.io | bash -s stable
-source ~/.rvm/scripts/rvm
-rvm requirements
-rvm install ruby-2.0
-rvm use ruby --default
-rvm rubygems current
-gem install bosh_cli --pre
-gem install bosh_cli_plugin_micro --pre
-mkdir deployments
-cd deployments/
-mkdir micro01
-cd micro01/
+$ sudo apt-get -y install libsqlite3-dev genisoimage
+$ sudo apt-get update
+$ sudo apt-get install curl
+$ \curl -L https://get.rvm.io | bash -s stable
+$ source ~/.rvm/scripts/rvm
+$ rvm requirements
+$ rvm install ruby-2.0
+$ rvm use ruby --default
+$ rvm rubygems current
+$ gem install bosh_cli --pre
+$ gem install bosh_cli_plugin_micro --pre
+$ mkdir deployments
+$ cd deployments/
+$ mkdir micro01
+$ cd micro01/
 ```
-Now, copy mycro
+Now, copy micro_bosh.yml to this location
 ```
-bosh public stemcells
-bosh download public stemcell bosh-stemcell-1868-vsphere-esxi-ubuntu.tgz
-bosh upload stemcell bosh-stemcell-1868-vsphere-esxi-ubuntu.tgz
-
-```
-bosh-bootstrap bug: https://github.com/cloudfoundry-community/cyoi/blob/master/lib/cyoi/cli/providers/provider_cli_vsphere.rb -> fix line 23 in
-
-```
-$ vi ~/.rvm/gems/ruby-2.1.0/gems/cyoi-0.8.0/lib/cyoi/cli/providers/provider_cli_vsphere.rb
-: 23
-```
-move cursor to h1 and change it to hl by typing cw (change word in vi) in hl. 
-```
-cwhl
-SHIFT+ZZ
-```
-now start deployment of microbosh
-```
-$ bosh-bootstrap deploy
+$ cd ..
+$ bosh download public stemcell bosh-stemcell-1868-vsphere-esxi-ubuntu.tgz
+$  bosh micro deployment micro01/micro_bosh.yml
+$ bosh micro deploy bosh-stemcell-1868-vsphere-esxi-ubuntu.tgz
 ```
 
 # Deploy Cloudfoundry
