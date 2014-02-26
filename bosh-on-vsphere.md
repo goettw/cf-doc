@@ -23,7 +23,7 @@ $ cd deployments/
 $ mkdir micro01
 $ cd micro01/
 ```
-Now, copy micro_bosh.yml to this location
+Now, copy [micro bosh manifest](templates/micro_bosh.yml) to this location
 ```
 $ cd ..
 $ bosh download public stemcell bosh-stemcell-1868-vsphere-esxi-ubuntu.tgz
