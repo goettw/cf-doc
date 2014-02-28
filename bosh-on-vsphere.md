@@ -41,5 +41,11 @@ $ bosh micro deploy bosh-stemcell-1868-vsphere-esxi-ubuntu.tgz
 $ ssh vcap@<microbosh director ip-address>
 $ password "c1oudc0w"
 ```
-
-
+#Install CF Client
+http://docs.cloudfoundry.org/devguide/installcf/
+```
+$ mkdir gcf
+$ wget https://github.com/cloudfoundry/cli/releases/download/v6.0.1/cf-linux-amd64.tgz
+$ tar xzf cf-linux-amd64.tgz
+$ sudo mv cf /usr/local/bin/
+```
