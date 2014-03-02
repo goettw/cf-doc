@@ -1,12 +1,13 @@
 # Deploy Microbosh
 
 ##Prepare VSPHERE
-* Turn on DRS on the cluster, add resource-pool
+* create Folders: microbosh, microbosh-template
+* create Standard Switch Network: VM Network 2
+* Turn on DRS on the cluster, add resource-pool cf-resource-pool
 
-## On client (in my case ubuntu)
+## On client (ubuntu-12.04.3-server-amd64)
 
 ```
-$ bosh download public stemcell bosh-stemcell-1868-vsphere-esxi-ubuntu.tgz
 $ sudo apt-get -y install libsqlite3-dev genisoimage
 $ sudo apt-get update
 $ sudo apt-get install curl
@@ -18,6 +19,7 @@ $ rvm use ruby --default
 $ rvm rubygems current
 $ gem install bosh_cli --pre
 $ gem install bosh_cli_plugin_micro --pre
+$ bosh download public stemcell bosh-stemcell-1868-vsphere-esxi-ubuntu.tgz
 $ mkdir deployments
 $ cd deployments/
 $ mkdir micro01
