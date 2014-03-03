@@ -57,10 +57,25 @@ $ cf create-space dev -o myorg
 # clone app
 ```
 cd ~/git
-git clone 
+git clone https://github.com/mstine/cf-scale-demo.git
+cd cf-scale-demo
 ```
-
-
+# push app
+first edit manifest.mf. Here ist the content:
+```
+---
+applications:
+- name: cf-scale-demo
+  memory: 128M
+  instances: 1
+  host: cf-scale-demo
+  domain: goettecf.io
+  path: .
+```
+now deploy it
+```
+cf push
+```
 # Troubleshooting
 ## microbosh ssh login
 
