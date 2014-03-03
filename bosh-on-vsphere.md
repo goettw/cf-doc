@@ -45,6 +45,22 @@ $ wget https://github.com/cloudfoundry/cli/releases/download/v6.0.1/cf-linux-amd
 $ tar xzf cf-linux-amd64.tgz
 $ sudo mv cf /usr/local/bin/
 ```
+# prepare cloudfoundry
+```
+$ cf target -cf login -a api.goettecf.io
+$ cf login
+$ username: admin
+$ password: 7f7b072987bf
+$ cf create-org myorg
+$ cf create-space dev -o myorg
+```
+# clone app
+```
+cd ~/git
+git clone 
+```
+
+
 # Troubleshooting
 ## microbosh ssh login
 
