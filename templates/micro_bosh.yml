@@ -60,4 +60,4 @@ apply_spec:
                 resource_pool: cf-resource-pool 
     dns:
         # The BOSH powerDNS contacts the following DNS server for serving DNS entries from other domains.
-        recursor: 192.168.1.2 
+        recursor: 10.0.0.1 

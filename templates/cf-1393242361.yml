@@ -117,7 +117,7 @@ jobs:
 properties:
   cf:
     name: cf-1393242361
-    dns: 10.0.0.10.xip.io
+    dns: api.goettecf.io 
     ip_addresses: ["10.0.0.10"]
     deployment_size: medium
     security_group: default
@@ -125,11 +125,11 @@ properties:
     common_password: 7f7b072987bf
     dea_server_ram: 1500
 
-  domain: 10.0.0.10.xip.io
-  system_domain: 10.0.0.10.xip.io.com
+  domain: goettecf.io 
+  system_domain: goettecf.io 
   system_domain_organization: system_domain
   app_domains:
-    - 10.0.0.10.xip.io
+    - goettecf.io 
 
   networks:
     apps: default
@@ -158,14 +158,10 @@ properties:
 
   dea_next: *dea
 
-  syslog_aggregator:
-    address: 0.syslog-aggregator.default.cf-1393242361.microbosh
-    port: 54321
-
   nfs_server:
     address: 0.data.default.cf-1393242361.microbosh
     network: "*.cf-1393242361.microbosh"
-    idmapd_domain: 10.0.0.10.xip.io
+    idmapd_domain: api.goettecf.io
 
   debian_nfs_server:
     no_root_squash: true
@@ -222,7 +218,7 @@ properties:
   cc: &cc
     logging_level: debug
     external_host: api
-    srv_api_uri: http://api.10.0.0.10.xip.io
+    srv_api_uri: http://api.goettecf.io
     cc_partition: default
     db_encryption_key: 7f7b072987bf
     bootstrap_admin_email: admin@10.0.0.10.xip.io
@@ -247,7 +243,7 @@ properties:
     enabled: false
 
   uaa:
-    url: http://uaa.10.0.0.10.xip.io
+    url: http://uaa.goettecf.io
     spring_profiles: postgresql
     no_ssl: true
     catalina_opts: -Xmx768m -XX:MaxPermSize=256m
