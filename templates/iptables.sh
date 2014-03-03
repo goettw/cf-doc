@@ -19,8 +19,7 @@
 
         iptables -t nat -A PREROUTING -d $GATEWAY_EXTERNAL_IP -p tcp --dport 443 -j DNAT \
                  --to $HA_PROXY_IP
-        iptables -t nat -A PREROUTING -d $GATEWAY_EXTERNAL_IP -p tcp --dport 80 -j DNAT \
-                 --to $HA_PROXY_IP
+    
 
         iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 8443 -j DNAT \
               --to $PIVOTALCF_IP:443
