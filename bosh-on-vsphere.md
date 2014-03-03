@@ -1,34 +1,82 @@
 # Deploy Microbosh
 
 ##Prepare VSPHERE
-* Turn on DRS on the cluster, add resource-pool
+* create Folders: microbosh, microbosh-template
+* create Standard Switch Network: VM Network 2
+* Turn on DRS on the cluster, add resource-pool cf-resource-pool
 
-## On client (in my case ubuntu)
-
-```
-$ rvm use ruby-2.0
-$ sudo apt-get install libxslt-dev libxml2-dev
-$ gem install bosh-bootstrap
-```
-bosh-bootstrap bug: https://github.com/cloudfoundry-community/cyoi/blob/master/lib/cyoi/cli/providers/provider_cli_vsphere.rb -> fix line 23 in
+## On client (ubuntu-12.04.3-server-amd64)
 
 ```
-$ vi ~/.rvm/gems/ruby-2.1.0/gems/cyoi-0.8.0/lib/cyoi/cli/providers/provider_cli_vsphere.rb
-: 23
+$ sudo apt-get -y install libsqlite3-dev genisoimage
+$ sudo apt-get update
+$ sudo apt-get install curl
+$ \curl -L https://get.rvm.io | bash -s stable
+$ source ~/.rvm/scripts/rvm
+$ rvm requirements
+$ rvm install ruby-2.0
+$ rvm use ruby --default
+$ rvm rubygems current
+$ gem install bosh_cli --pre
+$ gem install bosh_cli_plugin_micro --pre
+$ bosh download public stemcell bosh-stemcell-1868-vsphere-esxi-ubuntu.tgz
+$ mkdir deployments
+$ cd deployments/
+$ mkdir micro01
+$ cd micro01/
 ```
-move cursor to h1 and change it to hl by typing cw (change word in vi) in hl. 
+Now, copy [micro bosh manifest](templates/micro_bosh.yml) to this location
 ```
-cwhl
-SHIFT+ZZ
-```
-now start deployment of microbosh
-```
-$ bosh-bootstrap deploy
+$ cd ..
+$ bosh download public stemcell bosh-stemcell-1868-vsphere-esxi-ubuntu.tgz
+$  bosh micro deployment micro01/micro_bosh.yml
+$ bosh micro deploy bosh-stemcell-1868-vsphere-esxi-ubuntu.tgz
 ```
 
 # Deploy Cloudfoundry
 ## bosh-cloudfoundry
 [My version, including vsphere support](https://github.com/goettw/bosh-cloudfoundry)
+
+#Install CF Client
+http://docs.cloudfoundry.org/devguide/installcf/
+```
+$ mkdir gcf
+$ wget https://github.com/cloudfoundry/cli/releases/download/v6.0.1/cf-linux-amd64.tgz
+$ tar xzf cf-linux-amd64.tgz
+$ sudo mv cf /usr/local/bin/
+```
+# Push Application
+## prepare cloudfoundry
+```
+$ cf target -cf login -a api.goettecf.io
+$ cf login
+$ username: admin
+$ password: 7f7b072987bf
+$ cf create-org myorg
+$ cf create-space dev -o myorg
+```
+## clone app
+```
+cd ~/git
+git clone https://github.com/mstine/cf-scale-demo.git
+cd cf-scale-demo
+```
+## push app
+first edit manifest.mf. Here ist the content:
+```
+---
+applications:
+- name: cf-scale-demo
+  memory: 128M
+  instances: 1
+  host: cf-scale-demo
+  domain: goettecf.io
+  path: .
+```
+now deploy it
+```
+cf push
+```
 # Troubleshooting
 ## microbosh ssh login
 
@@ -36,5 +84,3 @@ $ bosh-bootstrap deploy
 $ ssh vcap@<microbosh director ip-address>
 $ password "c1oudc0w"
 ```
-
-
