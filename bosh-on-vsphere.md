@@ -45,7 +45,8 @@ $ wget https://github.com/cloudfoundry/cli/releases/download/v6.0.1/cf-linux-amd
 $ tar xzf cf-linux-amd64.tgz
 $ sudo mv cf /usr/local/bin/
 ```
-# prepare cloudfoundry
+# Push Application
+## prepare cloudfoundry
 ```
 $ cf target -cf login -a api.goettecf.io
 $ cf login
@@ -54,13 +55,13 @@ $ password: 7f7b072987bf
 $ cf create-org myorg
 $ cf create-space dev -o myorg
 ```
-# clone app
+## clone app
 ```
 cd ~/git
 git clone https://github.com/mstine/cf-scale-demo.git
 cd cf-scale-demo
 ```
-# push app
+## push app
 first edit manifest.mf. Here ist the content:
 ```
 ---
