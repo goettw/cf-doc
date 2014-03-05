@@ -21,57 +21,114 @@ resource_pools:
   - name: medium
     cloud_properties:
       ram: 1024
-      disk: 16348
+      disk: 2048
       cpu: 1
 
 jobs:
-
-  - name: core
+  - name: logs_z1
     instances: 1
+    persistent_disk: 8192
     networks:
       - name: cf1
         static_ips: (( static_ips(0) ))
 
-  - name: data
+  - name: logs_z2
+    instances: 1
+    persistent_disk: 8192
+    networks:
+      - name: cf2
+        static_ips: (( static_ips(0) ))
+
+  - name: nats_z1
     instances: 1
     networks:
       - name: cf1
         static_ips: (( static_ips(1) ))
 
-  - name: uaa
+  - name: nats_z2
+    instances: 1
+    networks:
+      - name: cf2
+        static_ips: (( static_ips(1) ))
+
+  - name: nfs_z1
     instances: 1
     networks:
       - name: cf1
         static_ips: (( static_ips(2) ))
 
-  - name: api
+  - name: postgres_z1
     instances: 1
-    persistent_disk: 8192
+    networks:
+      - name: cf1
+        static_ips: (( static_ips(12) ))
+
+  - name: router_z1
+    instances: 1
+    networks:
+      - name: cf1
+        static_ips: (( static_ips(5, 6) ))
+
+  - name: router_z2
+    instances: 1
+    networks:
+      - name: cf2
+        static_ips: (( static_ips(5, 6) ))
+
+  - name: loggregator_z1
+    instances: 2
+    networks:
+      - name: cf1
+        static_ips: (( static_ips(10, 11) ))
+
+  - name: loggregator_z2
+    instances: 2
+    networks:
+      - name: cf2
+        static_ips: (( static_ips(10, 11) ))
+
+  - name: loggregator_trafficcontroller_z1
+    instances: 1
+    networks:
+      - name: cf1
+        static_ips: (( static_ips(9) ))
+
+  - name: loggregator_trafficcontroller_z2
+    instances: 1
+    networks:
+      - name: cf2
+        static_ips: (( static_ips(9) ))
+
+  - name: ha_proxy_z1
+    instances: 1
     networks:
       - name: cf1
         static_ips: (( static_ips(3) ))
-  
-  - name: runner 
-    instances: 1
-    persistent_disk: 16384
-    networks:
-      - name: cf1
-        static_ips: (( static_ips(4) ))
 
-  - name: loggregator 
+  - name: etcd_leader_z1
     instances: 1
     networks:
       - name: cf1
-        static_ips: (( static_ips(5) ))
+        static_ips: (( static_ips(13) ))
 
-  - name: api_worker 
+  - name: etcd_z1
     instances: 1
     networks:
       - name: cf1
-        static_ips: (( static_ips(6) ))
+        static_ips: (( static_ips(14) ))
+
+  - name: etcd_z2
+    instances: 1
+    networks:
+      - name: cf2
+        static_ips: (( static_ips(13) ))
+
+  # using login template, that supports self-signed certs
+  - name: login_z1
+    template: login
 
 properties:
-  domain: (( ".goettecf.io" ))
+  domain: (( jobs.ha_proxy_z1.networks.cf1.static_ips.[0] ".xip.io" ))
   system_domain_organization: pivotal
 
   ccdb:
@@ -102,7 +159,7 @@ properties:
 
   databases:
     db_scheme: postgres
-    address: (( jobs.data.networks.cf1.static_ips.[0] ))
+    address: (( jobs.postgres_z1.networks.cf1.static_ips.[0] ))
     port: 5524
     roles:
       - tag: admin

@@ -14,27 +14,69 @@ meta:
 
   loggregator_endpoint:
     z1:
-      host: (( jobs.loggregator.networks.cf1.static_ips.[0] || nil ))
+      host: (( jobs.loggregator_trafficcontroller_z1.networks.cf1.static_ips.[0] || nil ))
 
   nfs_server: ~
 
 jobs:
-  - name: core 
+  - name: api 
     release: (( meta.release.name ))
-    template: (( merge || ["nats", "nats_stream_forwarder", "etcd"] ))
+    template: (( merge || ["haproxy", "gorouter", "cloud_controller_ng"] ))
+    instances: 0
+    resource_pool: medium
+    networks:
+      - name: cf1
+        static_ips: ~
+    properties:
+      networks: (( meta.networks.z1 ))
+      ccdb: ccdb
+      loggregator_endpoint:
+        host: (( meta.loggregator_endpoint.z1.host ))
+      ha_proxy:
+        ssl_pem: ~
+      router:
+        servers:
+          z1: (( jobs.api.networks.cf1.static_ips ))
+      nfs_server: (( meta.nfs_server ))
+
+  - name: nats_z1
+    release: (( meta.release.name ))
+    template: (( merge || ["nats", "nats_stream_forwarder"] ))
     instances: 1
-    resource_pool: small
+    resource_pool: medium
     networks:
       - name: cf1
         static_ips: (( merge ))
     properties:
       networks: (( meta.networks.z1 ))
 
+  - name: logs_z1
+    release: (( meta.release.name ))
+    template: syslog_aggregator
+    instances: 0
+    resource_pool: medium
+    persistent_disk: 100000
+    networks:
+      - name: cf1
+        static_ips: (( merge ))
+    properties:
+      networks: (( meta.networks.z1 ))
+
+  - name: stats_z1
+    release: (( meta.release.name ))
+    template: collector
+    instances: 1
+    resource_pool: small
+    networks:
+      - name: cf1
+    properties:
+      networks: (( meta.networks.z1 ))
+
   - name: data 
     release: (( meta.release.name ))
     template: (( merge || ["postgres", "debian_nfs_server"] ))
-    instances: 1
-    resource_pool: small
+    instances: 0
+    resource_pool: medium
     persistent_disk: 102400
     networks:
       - name: cf1
@@ -43,7 +85,7 @@ jobs:
       db: databases
 
 
-  - name: uaa
+  - name: uaa_z1
     release: (( meta.release.name ))
     template: (( merge || ["uaa", "login"] ))
     instances: 1
@@ -53,7 +95,7 @@ jobs:
     properties:
       networks: (( meta.networks.z1 ))
 
-  - name: api_worker
+  - name: api_worker_z1
     release: (( meta.release.name ))
     template: cloud_controller_ng
     instances: 1
@@ -71,16 +113,27 @@ jobs:
       nfs_server: (( meta.nfs_server ))
 
 
-#  - name: hm_z1
-#    release: (( meta.release.name ))
-#    template: health_manager_next
-#    instances: 0
-#    resource_pool: medium
-#    networks:
-#      - name: cf1
-#    properties:
-#      networks: (( meta.networks.z1 ))
+  - name: hm_z1
+    release: (( meta.release.name ))
+    template: health_manager_next
+    instances: 0
+    resource_pool: medium
+    networks:
+      - name: cf1
+    properties:
+      networks: (( meta.networks.z1 ))
 
+  - name: etcd_z1
+    release: (( meta.release.name ))
+    template: etcd
+    instances: 1
+    persistent_disk: 10024
+    resource_pool: medium
+    networks:
+      - name: cf1
+        static_ips:  (( merge ))
+    properties:
+      networks: (( meta.networks.z1 ))
 
   - name: runner
     release: (( meta.release.name ))
@@ -97,9 +150,9 @@ jobs:
       loggregator_endpoint:
         host: (( meta.loggregator_endpoint.z1.host ))
 
-  - name: loggregator
+  - name: loggregator_z1
     release: (( meta.release.name ))
-    template: (( merge || ["loggregator" || "loggregator_trafficcontroller" || "syslog_aggregator"] ))
+    template: (( merge || ["loggregator" || "loggregator_trafficcontroller"] ))
     instances: 1
     resource_pool: medium
     networks:
@@ -109,26 +162,6 @@ jobs:
       networks: (( meta.networks.z1 ))
       traffic_controller:
         zone: z1
-  - name: api 
-    release: (( meta.release.name ))
-    template: (( merge || ["gorouter", "cloud_controller_ng"] ))
-    instances: 1
-    resource_pool: small
-    networks:
-      - name: cf1
-        static_ips: ~
-    properties:
-      networks: (( meta.networks.z1 ))
-      ccdb: ccdb
-      loggregator_endpoint:
-        host: (( meta.loggregator_endpoint.z1.host ))
-      ha_proxy:
-        ssl_pem: ~
-      router:
-        servers:
-          z1: (( jobs.api.networks.cf1.static_ips ))
-      nfs_server: (( meta.nfs_server ))
-
 
 
 
@@ -147,8 +180,8 @@ properties:
   nats:
     user: (( merge ))
     password: (( merge ))
-    address: (( jobs.core.networks.cf1.static_ips.[0] ))
-    machines: (( jobs.core.networks.cf1.static_ips ))
+    address: (( jobs.nats_z1.networks.cf1.static_ips.[0] ))
+    machines: (( jobs.nats_z1.networks.cf1.static_ips ))
     port: 4222
     use_gnatsd: (( merge || true ))
     debug: false
@@ -174,7 +207,7 @@ properties:
 
   loggregator:
     servers:
-      z1: (( jobs.loggregator.networks.cf1.static_ips ))
+      z1: (( jobs.loggregator_z1.networks.cf1.static_ips ))
     maxRetainedLogMessages: 100
     debug: (( merge || false ))
     blacklisted_syslog_ranges: ~
