@@ -7,71 +7,22 @@ meta:
 compilation:
   cloud_properties:
     ram: 1024
-    disk: 6144
-    cpu: 2
+    disk: 16144
+    cpu: 1
 networks: (( merge ))
 
 resource_pools:
-  - name: small_z1
+  - name: small
     cloud_properties:
       ram: 1024
       disk: 2048
       cpu: 1
 
-  - name: small_z2
+  - name: medium
     cloud_properties:
       ram: 1024
       disk: 2048
       cpu: 1
-
-  - name: medium_z1
-    cloud_properties:
-      ram: 1024
-      disk: 2048
-      cpu: 1
-
-  - name: medium_z2
-    cloud_properties:
-      ram: 1024
-      disk: 2048
-      cpu: 1
-
-  - name: large_z1
-    cloud_properties:
-      ram: 1024
-      disk: 10240
-      cpu: 1
-
-  - name: large_z2
-    cloud_properties:
-      ram: 1024
-      disk: 10240
-      cpu: 1
-
-  - name: runner_z1
-    cloud_properties:
-      ram: 16384
-      disk: 32768
-      cpu: 2
-
-  - name: runner_z2
-    cloud_properties:
-      ram: 16384
-      disk: 32768
-      cpu: 2
-
-  - name: router_z1
-    cloud_properties:
-      ram: 1024
-      disk: 2048
-      cpu: 1
-
-  - name: router_z2
-    cloud_properties:
-      ram: 1024
-      disk: 2048
-      cpu: 1
-
 
 jobs:
   - name: logs_z1
@@ -89,7 +40,7 @@ jobs:
         static_ips: (( static_ips(0) ))
 
   - name: nats_z1
-    instances: 0
+    instances: 1
     networks:
       - name: cf1
         static_ips: (( static_ips(1) ))

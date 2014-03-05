@@ -22,7 +22,7 @@ jobs: (( merge ))
 properties: (( merge ))
 
 compilation:
-  workers: 6
+  workers: 2
   network: cf1
   reuse_compilation_vms: true
   cloud_properties: (( merge ))
@@ -34,62 +34,14 @@ update:
   update_watch_time: 5000-600000
 
 resource_pools:
-  - name: small_z1
+  - name: small
     network: cf1
     size: (( auto ))
     stemcell: (( meta.stemcell ))
     cloud_properties: (( merge ))
 
-  - name: small_z2
-    network: cf2
-    size: (( auto ))
-    stemcell: (( meta.stemcell ))
-    cloud_properties: (( merge ))
-
-  - name: medium_z1
+  - name: medium
     network: cf1
-    size: (( auto ))
-    stemcell: (( meta.stemcell ))
-    cloud_properties: (( merge ))
-
-  - name: medium_z2
-    network: cf2
-    size: (( auto ))
-    stemcell: (( meta.stemcell ))
-    cloud_properties: (( merge ))
-
-  - name: large_z1
-    network: cf1
-    size: (( auto ))
-    stemcell: (( meta.stemcell ))
-    cloud_properties: (( merge ))
-
-  - name: large_z2
-    network: cf2
-    size: (( auto ))
-    stemcell: (( meta.stemcell ))
-    cloud_properties: (( merge ))
-
-  - name: runner_z1
-    network: cf1
-    size: (( auto ))
-    stemcell: (( meta.stemcell ))
-    cloud_properties: (( merge ))
-
-  - name: runner_z2
-    network: cf2
-    size: (( auto ))
-    stemcell: (( meta.stemcell ))
-    cloud_properties: (( merge ))
-
-  - name: router_z1
-    network: cf1
-    size: (( auto ))
-    stemcell: (( meta.stemcell ))
-    cloud_properties: (( merge ))
-
-  - name: router_z2
-    network: cf2
     size: (( auto ))
     stemcell: (( meta.stemcell ))
     cloud_properties: (( merge ))
